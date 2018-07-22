@@ -1,0 +1,27 @@
+version: '3.3'
+services:
+  db:
+    restart: always
+    image: postgres:10
+    volumes:
+      - dbdatavol:/var/lib/postgresql/data
+
+  app:
+    build: ./app
+    depends_on:
+      - db
+    ports:
+      - "80:80"
+    restart: always
+    environment:
+      TTRSS_DB_TYPE: pgsql
+      TTRSS_DB_HOST: db
+      TTRSS_DB_PORT: 5432
+      TTRSS_DB_USER: postgres
+      TTRSS_DB_NAME: postgres
+      TTRSS_DB_PASSWORD: postgres
+      TTRSS_SELF_URL_PATH: http://127.0.0.1/
+
+volumes:
+  dbdatavol:
+    driver: local
