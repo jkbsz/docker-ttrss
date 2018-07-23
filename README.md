@@ -9,7 +9,7 @@ Two containers:
 - App: Apache + PHP + TT-RSS
 
 PostgreSQL data is stored inside a Docker Volume to persist data batween restarts and upgrades.
-Still I would not update before updating the Volume.
+Still I would not update before backing up the Volume.
 By design needs something in front that will provide encryption.
 
 ## Usage
