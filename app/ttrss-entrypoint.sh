@@ -15,8 +15,6 @@ until psql --host "$TTRSS_DB_HOST" --port "$TTRSS_DB_PORT" --username "$TTRSS_DB
 	sleep 3
 done
 
-set -Eeo pipefail
-
 rowcount=$(psql --host "$TTRSS_DB_HOST" --port "$TTRSS_DB_PORT" --username "$TTRSS_DB_USER" --dbname "$TTRSS_DB_NAME" --tuples-only --command "SELECT count(*) FROM information_schema.tables WHERE table_name like 'ttrss_%'" | awk '{print $1}')
 
 echo "[$(date)] ttrss_* tables [$rowcount]"
