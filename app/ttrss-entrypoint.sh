@@ -15,15 +15,20 @@ until psql --host "$TTRSS_DB_HOST" --port "$TTRSS_DB_PORT" --username "$TTRSS_DB
 	sleep 3
 done
 
-rowcount=$(psql --host "$TTRSS_DB_HOST" --port "$TTRSS_DB_PORT" --username "$TTRSS_DB_USER" --dbname "$TTRSS_DB_NAME" --tuples-only --command "SELECT count(*) FROM information_schema.tables WHERE table_name like 'ttrss_%'" | awk '{print $1}')
 
-echo "[$(date)] ttrss_* tables [$rowcount]"
+if [[ $1 == "update-daemon" ]] ; then
+	rowcount=$(psql --host "$TTRSS_DB_HOST" --port "$TTRSS_DB_PORT" --username "$TTRSS_DB_USER" --dbname "$TTRSS_DB_NAME" --tuples-only \
+		--command "SELECT count(*) FROM information_schema.tables WHERE table_name like 'ttrss_%'" | awk '{print $1}')
 
-if [[ "$rowcount" == "0" ]] ; then
-	echo "[$(date)] No ttrss_* tables found - running schema script"
-	psql --host $TTRSS_DB_HOST --port $TTRSS_DB_PORT --username $TTRSS_DB_USER --dbname $TTRSS_DB_NAME --file /var/www/html/schema/ttrss_schema_pgsql.sql
-else
-	echo "[$(date)] Table ttrss_* detected - moving on..."
+	echo "[$(date)] ttrss_* tables [$rowcount]"
+
+	if [[ "$rowcount" == "0" ]] ; then
+		echo "[$(date)] No ttrss_* tables found - running schema script"
+		psql --host $TTRSS_DB_HOST --port $TTRSS_DB_PORT --username $TTRSS_DB_USER --dbname $TTRSS_DB_NAME \
+			--file /var/www/html/schema/ttrss_schema_pgsql.sql
+	else
+		echo "[$(date)] Table ttrss_* detected - moving on..."
+	fi
 fi
 
 echo "[$(date)] Setting up config.php"

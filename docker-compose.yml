@@ -21,7 +21,6 @@ services:
     build: ./app
     depends_on:
       - db
-      - app
     restart: always
     env_file:
       - web-variables.env
