@@ -39,7 +39,16 @@ sed -ri \
 	-e "s#(define\('SELF_URL_PATH').*\$#\1, '$TTRSS_SELF_URL_PATH');#g" \
 	/var/www/html/config.php
 
-echo "[$(date)] Running Apache and update daemon"
+echo "[$(date)] Running process..."
 
-sudo -u www-data /usr/bin/php /var/www/html/update_daemon2.php & /usr/sbin/apache2ctl -D FOREGROUND
+if [[ $1 == "apache" ]] ; then
+	echo "[$(date)] Apache only"
+	/usr/sbin/apache2ctl -D FOREGROUND
+elif [[ $1 == "update-daemon" ]] ; then
+	echo "[$(date)] update_daemon2 only"
+	sudo -u www-data /usr/bin/php /var/www/html/update_daemon2.php
+else
+	echo "[$(date)] Apache and update_daemon2"
+	sudo -u www-data /usr/bin/php /var/www/html/update_daemon2.php & /usr/sbin/apache2ctl -D FOREGROUND
+fi
 

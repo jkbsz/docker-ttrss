@@ -37,6 +37,7 @@ RUN curl -SL https://git.tt-rss.org/fox/tt-rss/archive/master.tar.gz | tar xz --
 EXPOSE 80
 
 COPY ttrss-entrypoint.sh /var/www/
+RUN chmod a+x /var/www/ttrss-entrypoint.sh
 
-CMD chmod a+x /var/www/ttrss-entrypoint.sh && /var/www/ttrss-entrypoint.sh
+ENTRYPOINT ["/var/www/ttrss-entrypoint.sh"]
 

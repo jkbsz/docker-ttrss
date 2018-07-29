@@ -13,15 +13,21 @@ services:
     ports:
       - "80:80"
     restart: always
-    environment:
-      TTRSS_DB_TYPE: pgsql
-      TTRSS_DB_HOST: db
-      TTRSS_DB_PORT: 5432
-      TTRSS_DB_USER: postgres
-      TTRSS_DB_NAME: postgres
-      TTRSS_DB_PASSWORD: postgres
-      TTRSS_SELF_URL_PATH: http://127.0.0.1/
+    env_file:
+      - web-variables.env
+    command: apache
+
+  rssd:
+    build: ./app
+    depends_on:
+      - db
+      - app
+    restart: always
+    env_file:
+      - web-variables.env
+    command: update-daemon
 
 volumes:
   dbdatavol:
     driver: local
+
