@@ -16,20 +16,19 @@ until psql --host "$TTRSS_DB_HOST" --port "$TTRSS_DB_PORT" --username "$TTRSS_DB
 done
 
 
-if [[ $1 == "update-daemon" ]] ; then
-	rowcount=$(psql --host "$TTRSS_DB_HOST" --port "$TTRSS_DB_PORT" --username "$TTRSS_DB_USER" --dbname "$TTRSS_DB_NAME" --tuples-only \
-		--command "SELECT count(*) FROM information_schema.tables WHERE table_name like 'ttrss_%'" | awk '{print $1}')
+rowcount=$(psql --host "$TTRSS_DB_HOST" --port "$TTRSS_DB_PORT" --username "$TTRSS_DB_USER" --dbname "$TTRSS_DB_NAME" --tuples-only \
+	--command "SELECT count(*) FROM information_schema.tables WHERE table_name like 'ttrss_%'" | awk '{print $1}')
 
-	echo "[$(date)] ttrss_* tables [$rowcount]"
+echo "[$(date)] ttrss_* tables [$rowcount]"
 
-	if [[ "$rowcount" == "0" ]] ; then
-		echo "[$(date)] No ttrss_* tables found - running schema script"
-		psql --host $TTRSS_DB_HOST --port $TTRSS_DB_PORT --username $TTRSS_DB_USER --dbname $TTRSS_DB_NAME \
-			--file /var/www/html/schema/ttrss_schema_pgsql.sql
-	else
-		echo "[$(date)] Table ttrss_* detected - moving on..."
-	fi
+if [[ "$rowcount" == "0" ]] ; then
+	echo "[$(date)] No ttrss_* tables found - running schema script"
+	psql --host $TTRSS_DB_HOST --port $TTRSS_DB_PORT --username $TTRSS_DB_USER --dbname $TTRSS_DB_NAME \
+		--file /var/www/html/schema/ttrss_schema_pgsql.sql
+else
+	echo "[$(date)] Table ttrss_* detected - moving on..."
 fi
+
 
 echo "[$(date)] Setting up config.php"
 
@@ -46,14 +45,5 @@ sed -ri \
 
 echo "[$(date)] Running process..."
 
-if [[ $1 == "apache" ]] ; then
-	echo "[$(date)] Apache only"
-	/usr/sbin/apache2ctl -D FOREGROUND
-elif [[ $1 == "update-daemon" ]] ; then
-	echo "[$(date)] update_daemon2 only"
-	sudo -u www-data /usr/bin/php /var/www/html/update_daemon2.php
-else
-	echo "[$(date)] Apache and update_daemon2"
-	sudo -u www-data /usr/bin/php /var/www/html/update_daemon2.php & /usr/sbin/apache2ctl -D FOREGROUND
-fi
+sudo -u www-data /usr/bin/php /var/www/html/update_daemon2.php & /usr/sbin/apache2ctl -D FOREGROUND
 

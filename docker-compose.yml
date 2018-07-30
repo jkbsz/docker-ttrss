@@ -15,16 +15,6 @@ services:
     restart: always
     env_file:
       - web-variables.env
-    command: apache
-
-  rssd:
-    build: ./app
-    depends_on:
-      - db
-    restart: always
-    env_file:
-      - web-variables.env
-    command: update-daemon
 
 volumes:
   dbdatavol:
