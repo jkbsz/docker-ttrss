@@ -24,8 +24,9 @@ RUN apt-get update \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
 
-RUN sed -ri -e 's!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g' -e 's!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g' /etc/apache2/sites-available/000-default.conf \
-	&& rm -f /etc/apache2/sites-available/default-ssl.conf /var/www/html/index.html
+COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
+
+RUN rm -f /var/www/html/index.html
 
 # Deploy TT-RSS
 
