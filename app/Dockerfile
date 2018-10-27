@@ -21,17 +21,16 @@ RUN apt-get update \
 		postgresql-client \
 		curl \
 		sudo \
+		git \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
 
 COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
 
-RUN rm -f /var/www/html/index.html
-
 # Deploy TT-RSS
 
-RUN curl -SL https://git.tt-rss.org/fox/tt-rss/archive/master.tar.gz | tar xz --directory /var/www/html --strip-components 1 \
-	&& chown www-data:www-data -R /var/www/html
+RUN git clone https://tt-rss.org/git/tt-rss.git tt-rss \
+	&& chown www-data:www-data -R /var/www/tt-rss
 
 # Expose and run
 

@@ -24,7 +24,7 @@ echo "[$(date)] ttrss_* tables [$rowcount]"
 if [[ "$rowcount" == "0" ]] ; then
 	echo "[$(date)] No ttrss_* tables found - running schema script"
 	psql --host $TTRSS_DB_HOST --port $TTRSS_DB_PORT --username $TTRSS_DB_USER --dbname $TTRSS_DB_NAME \
-		--file /var/www/html/schema/ttrss_schema_pgsql.sql
+		--file /var/www/tt-rss/schema/ttrss_schema_pgsql.sql
 else
 	echo "[$(date)] Table ttrss_* detected - moving on..."
 fi
@@ -32,7 +32,7 @@ fi
 
 echo "[$(date)] Setting up config.php"
 
-cp /var/www/html/config.php-dist /var/www/html/config.php
+cp /var/www/tt-rss/config.php-dist /var/www/tt-rss/config.php
 sed -ri \
 	-e "s#(define\('DB_HOST').*\$#\1, '$TTRSS_DB_HOST');#g" \
 	-e "s#(define\('DB_TYPE').*\$#\1, '$TTRSS_DB_TYPE');#g" \
@@ -41,9 +41,9 @@ sed -ri \
 	-e "s#(define\('DB_PASS').*\$#\1, '$TTRSS_DB_PASSWORD');#g" \
 	-e "s#(define\('DB_PORT').*\$#\1, '$TTRSS_DB_PORT');#g" \
 	-e "s#(define\('SELF_URL_PATH').*\$#\1, '$TTRSS_SELF_URL_PATH');#g" \
-	/var/www/html/config.php
+	/var/www/tt-rss/config.php
 
 echo "[$(date)] Running process..."
 
-sudo -u www-data /usr/bin/php /var/www/html/update_daemon2.php & /usr/sbin/apache2ctl -D FOREGROUND
+sudo -u www-data /usr/bin/php /var/www/tt-rss/update_daemon2.php & /usr/sbin/apache2ctl -D FOREGROUND
 
