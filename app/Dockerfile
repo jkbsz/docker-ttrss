@@ -12,6 +12,7 @@ RUN apt-get update \
 		php-cli \
 		php-curl \
 		php-mbstring \
+		php-intl \
 		php-json \
 		php-gd \
 		php-pgsql \
