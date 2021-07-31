@@ -1,3 +1,5 @@
+# Old repo - does not work anymore
+
 # TTRSS Docker Compose
 
 ## Description
